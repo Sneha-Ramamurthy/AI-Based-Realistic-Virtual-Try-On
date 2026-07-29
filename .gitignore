@@ -1,0 +1,21 @@
+﻿# Environments
+venv/
+.env
+.env.local
+
+# Machine Learning & Data
+ml/checkpoints/
+*.h5
+*.pt
+*.pth
+*.onnx
+
+# Dependencies & Build Outputs
+node_modules/
+.next/
+dist/
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
