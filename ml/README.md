@@ -1,13 +1,21 @@
-# AI Virtual Try-On Pipeline
+# DressCode data pipeline
 
-This folder is a placeholder for the machine-learning portions of the project.
+`ml/data/dresscode.py` provides a PyTorch `Dataset` for paired DressCode samples. It reads whitespace-separated person/garment filename pairs and resolves them against category image folders. The dataset returns the paired person image as the reconstruction target plus optional agnostic and DensePose inputs when those folders exist.
 
-Planned components:
+`ml/scripts/prepare_dresscode.py` validates a split and writes an absolute-path JSONL manifest. Run it from the repository root:
 
-- dataset preparation and preprocessing
-- pose/landmark detection
-- garment segmentation
-- image synthesis or warping pipeline
-- metrics and evaluation notebooks
+```bash
+python -m ml.scripts.prepare_dresscode \
+  --dataset-root /path/to/DressCode \
+  --category upper_body \
+  --split train \
+  --output ml/artifacts/upper_body-train.jsonl
+```
 
-The current repository includes a simple deterministic preprocessing demo in the API layer, which can be upgraded with trained models later.
+Dataset variants may name folders differently. The loader handles common aliases; if your copy differs, adapt `_IMAGE_DIRS`, `_CLOTH_DIRS`, or the optional directory aliases to the actual extracted layout. This code only prepares and reads data; it does not train a virtual try-on model. Do not commit dataset assets, generated manifests, or trained checkpoints.
+
+Run the small unit tests with:
+
+```bash
+python -m unittest ml.tests.test_dresscode
+```

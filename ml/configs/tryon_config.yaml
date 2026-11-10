@@ -1,14 +1,25 @@
 project_name: virtual_try_on
 
+# Point commands at an extracted, locally accessible DressCode copy.
 data:
-  source_images:
-    - "dataset.png"
+  root: "/path/to/DressCode"
+  categories: [upper_body, lower_body, dresses]
+  train_split: train
+  evaluation_split: test
+  pair_file_pattern: "{split}_pairs.txt"
+  person_directory: image
+  garment_directory: cloth
+  optional_directories:
+    agnostic: [agnostic-v3.2, agnostic-v3, agnostic]
+    densepose: [image-densepose, densepose]
 
 pipeline:
-  stage: "heuristic-overlay"
-  output_dir: "artifacts"
+  current_api_mode: heuristic-demo
+  output_dir: ml/artifacts
+  note: "The API overlay is a UX placeholder; it is not a trained DressCode model."
 
 model:
-  backbone: "resnet-50"
+  architecture: null
   checkpoint: null
-  notes: "Replace with a pose-estimation or garment-segmentation model for production use."
+  status: not_implemented
+  notes: "Select and implement a licensed, evaluated try-on architecture before training or deployment."
