@@ -1,0 +1,14 @@
+project_name: virtual_try_on
+
+data:
+  source_images:
+    - "dataset.png"
+
+pipeline:
+  stage: "heuristic-overlay"
+  output_dir: "artifacts"
+
+model:
+  backbone: "resnet-50"
+  checkpoint: null
+  notes: "Replace with a pose-estimation or garment-segmentation model for production use."

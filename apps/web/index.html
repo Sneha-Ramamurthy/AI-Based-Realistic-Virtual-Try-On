@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virtual Try-On Demo</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+        margin: 0;
+        padding: 32px;
+      }
+      .card {
+        max-width: 980px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        padding: 24px;
+      }
+      h1 {
+        margin-top: 0;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+      .field {
+        margin-bottom: 12px;
+      }
+      input[type="file"] {
+        width: 100%;
+      }
+      button {
+        background: #2f6df6;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        cursor: pointer;
+      }
+      img {
+        width: 100%;
+        border-radius: 12px;
+        background: #eef3ff;
+        max-height: 500px;
+        object-fit: contain;
+      }
+      .hidden {
+        display: none;
+      }
+      .status {
+        margin-top: 12px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Virtual Try-On Demo</h1>
+      <form id="tryon-form">
+        <div class="grid">
+          <div>
+            <div class="field">
+              <label for="user_image">Person image</label>
+              <input id="user_image" type="file" name="user_image" accept="image/*" required />
+            </div>
+          </div>
+          <div>
+            <div class="field">
+              <label for="garment_image">Garment image</label>
+              <input id="garment_image" type="file" name="garment_image" accept="image/*" required />
+            </div>
+          </div>
+        </div>
+        <button type="submit">Generate preview</button>
+      </form>
+      <div id="status" class="status"></div>
+      <div class="grid" style="margin-top: 24px;">
+        <div>
+          <h3>Input</h3>
+          <img id="input-preview" alt="Input preview" />
+        </div>
+        <div>
+          <h3>Result</h3>
+          <img id="result-preview" alt="Generated result" class="hidden" />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById('tryon-form');
+      const statusEl = document.getElementById('status');
+      const resultPreview = document.getElementById('result-preview');
+      const inputPreview = document.getElementById('input-preview');
+
+      document.getElementById('user_image').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        inputPreview.src = URL.createObjectURL(file);
+      });
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        statusEl.textContent = 'Generating preview...';
+
+        try {
+          const response = await fetch('http://localhost:8000/api/v1/tryon', {
+            method: 'POST',
+            body: formData,
+          });
+
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.detail || 'Request failed');
+          }
+
+          resultPreview.src = data.image;
+          resultPreview.classList.remove('hidden');
+          statusEl.textContent = 'Preview ready.';
+        } catch (error) {
+          statusEl.textContent = error.message;
+        }
+      });
+    </script>
+  </body>
+</html>
